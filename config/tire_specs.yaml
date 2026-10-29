@@ -1,0 +1,20 @@
+tire:
+  name: "Hoosier_16.0x7.5-10_R20_8in"
+  manufacturer: "Hoosier"
+  compound: "R20"
+  construction: "Bias-Ply"
+
+dimensions:
+  unloaded_radius_m: 0.2032       # 16.0 in diámetro / 2
+  width_m: 0.1905                 # 7.5 in
+  rim_diameter_m: 0.2540          # 10.0 in
+  rim_width_in: 8.0               # Llanta ensanchada a 8 pulgadas
+
+nominal_conditions:
+  pressure_kpa: 82.7              # 12 psi (~83 kPa nominal de trabajo)
+  fz_nominal_n: 700.0             # Carga estática típica por rueda monoplaza con aero
+  operating_temp_c: [55.0, 75.0]  # Ventana viscoelástica óptima compuesto R20
+
+stiffness_estimates:
+  vertical_stiffness_n_m: 110000.0  # Rigidez elástica radial (Cz)
+  cornering_stiffness_n_rad: 25000.0 # Cornering stiffness inicial C_alpha @ Fz nominal

@@ -1,0 +1,30 @@
+calspan_round: 9
+units: "SI" # Archivos ASCII_SI
+
+channels:
+  time: "ET"
+  velocity: "V"
+  pressure: "P"
+  slip_angle: "SA"       # Grados
+  slip_ratio: "SL"       # Adimensional / porcentaje
+  camber: "IA"           # Inclination angle (grados)
+  fx: "FX"               # N
+  fy: "FY"               # N
+  fz: "FZ"               # N (negativo en SAE)
+  mx: "MX"               # N·m
+  mz: "MZ"               # N·m
+  temp_center: "TSTC"    # Temperatura centro banda (°C)
+
+conversions:
+  sae_to_iso:
+    invert_fz: true      # Fz_iso = -FZ_sae
+    invert_fy: true      # Fy_iso = -FY_sae
+    invert_mz: true      # Mz_iso = -MZ_sae
+    slip_angle_to_rad: true
+    camber_to_rad: true
+
+filters:
+  min_velocity_kmh: 30.0 # Descartar bajas velocidades con dinámicas de arranque del rodillo
+  fz_min_threshold_n: 150.0
+  fz_max_threshold_n: 1600.0
+  slip_angle_max_deg: 15.0
