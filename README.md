@@ -113,9 +113,9 @@ Con esta convención, para $\gamma \approx 0$ y $|\alpha| > 0.02$ rad, los datos
 | Filtro | Umbral | Razón |
 |---|---|---|
 | Cabecera del archivo | `16.0X7.5-10`, `Rim_Width=8.0` | Solo el neumático y llanta objetivo |
-| Velocidad | $\lvert V\rvert \ge 30$ km/h | Dinámica de arranque del rodillo |
+| Velocidad | $| V| \ge 30$ km/h | Dinámica de arranque del rodillo |
 | Carga vertical | $150 \le F_z \le 1600$ N | Fuera de rango, la curva no es representativa |
-| Ángulo de deriva | $\lvert\alpha\rvert \le 15°$ | Región lineal-saturada; excluye transitorios extremos |
+| Ángulo de deriva | $|\alpha| \le 15°$ | Región lineal-saturada; excluye transitorios extremos |
 
 ### 3.3 Features
 
@@ -148,11 +148,11 @@ $$
 \begin{aligned}
 \mu_y &= (D_{y1} + D_{y2}\,d_{Fz})(1 + p_{py1}\,d_P)(1 - D_{y3}\gamma^2) \\
 D_y &= \mu_y\,F_z \\
-K_{y\alpha 0} &= K_{y1}\,F_{z0}\,\sin\!\Big(2\arctan\tfrac{F_z}{K_{y2}F_{z0}}\Big)(1 + p_{py2}\,d_P) \\
+K_{y\alpha 0} &= K_{y1}\,F_{z0}\,\sin\!(2\arctan\tfrac{F_z}{K_{y2}F_{z0}})(1 + p_{py2}\,d_P) \\
 B_y &= \dfrac{K_{y\alpha 0}}{C_y D_y}, \qquad S_{Hy} = H_{y1} + H_{y2}\,d_{Fz} + H_{y3}\gamma \\
-S_{Vy} &= F_z\big[(V_{y1}+V_{y2}\,d_{Fz}) + (V_{y3}+V_{y4}\,d_{Fz})\gamma\big] \\
-E_y &= \tanh(E_{y1}+E_{y2}\,d_{Fz})\big(1 - (E_{y3}+E_{y4}\gamma)\,\mathrm{sign}(\alpha_y)\big), \qquad \alpha_y = \alpha + S_{Hy} \\
-F_{y0} &= D_y\,\sin\!\Big\{C_y\arctan\big[B_y\alpha_y - E_y(B_y\alpha_y - \arctan B_y\alpha_y)\big]\Big\} + S_{Vy}
+S_{Vy} &= F_z[(V_{y1}+V_{y2}\,d_{Fz}) + (V_{y3}+V_{y4}\,d_{Fz})\gamma] \\
+E_y &= \tanh(E_{y1}+E_{y2}\,d_{Fz})(1 - (E_{y3}+E_{y4}\gamma)\,\mathrm{sign}(\alpha_y)), \qquad \alpha_y = \alpha + S_{Hy} \\
+F_{y0} &= D_y\,\sin\!\{C_y\arctan[B_y\alpha_y - E_y(B_y\alpha_y - \arctan B_y\alpha_y)]\} + S_{Vy}
 \end{aligned}
 $$
 
@@ -163,9 +163,9 @@ $$
 \alpha_t &= \alpha + q_{Hz1} + q_{Hz2}\,d_{Fz} + (q_{Hz3} + q_{Hz4}\,d_{Fz})\gamma \\
 D_t &= F_z\,\tfrac{r_0}{F_{z0}}(q_{Dz1}+q_{Dz2}\,d_{Fz})(1+q_{pz1}\,d_P)(1 - q_{Dz3}|\gamma|) \\
 B_t &= \dfrac{(q_{Bz1}+q_{Bz2}d_{Fz}+q_{Bz3}d_{Fz}^2)(1+q_{Bz5}|\gamma|)\,r_0}{F_{z0}D_t} \\
-E_t &= \tanh(q_{Ez1}+q_{Ez2}\,d_{Fz})\big(1+(q_{Ez4}+q_{Ez5}\gamma)\mathrm{sign}(\alpha_t)\big) \\
-t &= D_t\cos\!\Big\{q_{Cz1}\arctan\big[B_t\alpha_t - E_t(B_t\alpha_t - \arctan B_t\alpha_t)\big]\Big\}\cos\alpha \\
-M_{zr} &= D_r\cos(\arctan B_r\alpha_r), \quad D_r = F_z r_0\big[(q_{Dz6}+q_{Dz7}d_{Fz}) + (q_{Dz8}+q_{Dz9}d_{Fz})\gamma\big] \\
+E_t &= \tanh(q_{Ez1}+q_{Ez2}\,d_{Fz})(1+(q_{Ez4}+q_{Ez5}\gamma)\mathrm{sign}(\alpha_t)) \\
+t &= D_t\cos\!\{q_{Cz1}\arctan[B_t\alpha_t - E_t(B_t\alpha_t - \arctan B_t\alpha_t)]\}\cos\alpha \\
+M_{zr} &= D_r\cos(\arctan B_r\alpha_r), \quad D_r = F_z r_0[(q_{Dz6}+q_{Dz7}d_{Fz}) + (q_{Dz8}+q_{Dz9}d_{Fz})\gamma] \\
 \alpha_r &= \alpha + S_{Hy} + \dfrac{S_{Vy}}{K_{y\alpha0}}, \qquad B_r = \dfrac{r_0}{F_{z0}} \\
 M_{z0} &= -\,t\,(F_{y0} - S_{Vy}) + M_{zr}
 \end{aligned}
@@ -210,10 +210,10 @@ Implementado en `models/network.py`.
 ### 5.2 Gate: por qué el residual se apaga en el origen
 
 $$
-g(\alpha,\gamma,\dot\alpha) = g_{\text{floor}} + (1-g_{\text{floor}})\tanh\!\big(15|\alpha| + 5|\gamma| + 2|\dot\alpha|\big), \qquad g_{\text{floor}}=0
+g(\alpha,\gamma,\dot\alpha) = g_{\text{floor}} + (1-g_{\text{floor}})\tanh\!(15|\alpha| + 5|\gamma| + 2|\dot\alpha|), \qquad g_{\text{floor}}=0
 $$
 
-| $\lvert\alpha\rvert$ | $g$ (aprox.) | Lectura |
+| $|\alpha|$ | $g$ (aprox.) | Lectura |
 |---|---|---|
 | 0.00 rad (0°) | 0.00 | Residual silenciado |
 | 0.02 rad (≈1.1°) | 0.29 | Transición |
@@ -233,9 +233,9 @@ $$
 
 | Término | Definición | Escala de normalización |
 |---|---|---|
-| $\mathcal{L}_{\text{data}}$ | $\mathrm{Huber}_{\delta=5}\!\big(\tfrac{\Delta F_y}{70},\tfrac{r_{Fy}}{70}\big) + \mathrm{Huber}_{\delta=5}\!\big(\tfrac{\Delta M_z}{8.3},\tfrac{r_{Mz}}{8.3}\big)$ | RMSE de Pacejka → ambos canales pesan igual |
-| $\mathcal{L}_{\text{pas}}$ | $\mathbb{E}\big[\mathrm{ReLU}(-\tfrac{F_y}{2500}\mathrm{sign}\alpha)^2\big]$ en máscara $\lvert\gamma\rvert<0.015 \wedge \lvert\alpha\rvert>0.02$ | Penaliza potencia disipada negativa |
-| $\mathcal{L}_{\text{reg}}$ | $\mathbb{E}\big[(\tfrac{\Delta F_y}{2500})^2\big] + \mathbb{E}\big[(\tfrac{\Delta M_z}{40})^2\big]$ | Empuja $\Delta\to 0$ en zonas ambiguas |
+| $\mathcal{L}_{\text{data}}$ | $\mathrm{Huber}_{\delta=5}\!(\tfrac{\Delta F_y}{70},\tfrac{r_{Fy}}{70}) + \mathrm{Huber}_{\delta=5}\!(\tfrac{\Delta M_z}{8.3},\tfrac{r_{Mz}}{8.3})$ | RMSE de Pacejka → ambos canales pesan igual |
+| $\mathcal{L}_{\text{pas}}$ | $\mathbb{E}[\mathrm{ReLU}(-\tfrac{F_y}{2500}\mathrm{sign}\alpha)^2]$ en máscara $|\gamma|<0.015 \wedge |\alpha|>0.02$ | Penaliza potencia disipada negativa |
+| $\mathcal{L}_{\text{reg}}$ | $\mathbb{E}[(\tfrac{\Delta F_y}{2500})^2] + \mathbb{E}[(\tfrac{\Delta M_z}{40})^2]$ | Empuja $\Delta\to 0$ en zonas ambiguas |
 
 > **Nota.** Con $\delta=5$ sobre valores escalados por 70 N, la zona cuadrática de Huber llega a ±350 N: en la práctica es MSE. El nombre "Huber" es más conservador de lo que el comportamiento real sugiere.
 
@@ -447,7 +447,7 @@ Explícitos, para que cualquier cambio de premisa invalide lo correcto:
 | Sin relajación transitoria | `relaxation.py` vacío; $\dot\alpha$ es solo feature de la red |
 | Sin modelo térmico | `thermal_core.py` vacío; $\bar T$ y $\Delta T$ entran como features sin dinámica propia |
 | Un neumático, un compuesto, un rango de presión | Generalización no demostrada |
-| $\lvert\alpha\rvert \le 15°$ y $150 \le F_z \le 1600$ N | Fuera de esos rangos el comportamiento es no controlado |
+| $|\alpha| \le 15°$ y $150 \le F_z \le 1600$ N | Fuera de esos rangos el comportamiento es no controlado |
 
 ### 13.2 Datos
 
