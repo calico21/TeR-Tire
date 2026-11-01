@@ -106,7 +106,7 @@ flowchart TD
 | `SA` | deg | $\alpha = \text{rad}(SA)$ | Sin inversión |
 | `IA` | deg | $\gamma = \text{rad}(IA)$ | Caída en radianes |
 
-Con esta convención, para $\gamma \approx 0$ y $|\alpha| > 0.02$ rad, los datos deben cumplir $F_y \cdot \operatorname{sign}(\alpha) > 0$. Lo verifica `02_train_pinn.py` al arrancar (porcentaje de violaciones en datos medidos, debe ser ≈ 0).
+Con esta convención, para $\gamma \approx 0$ y $|\alpha| > 0.02$ rad, los datos deben cumplir $F_y \cdot \mathrm{sign}(\alpha) > 0$. Lo verifica `02_train_pinn.py` al arrancar (porcentaje de violaciones en datos medidos, debe ser ≈ 0).
 
 ### 3.2 Filtros aplicados
 
@@ -151,7 +151,7 @@ D_y &= \mu_y\,F_z \\
 K_{y\alpha 0} &= K_{y1}\,F_{z0}\,\sin\!\Big(2\arctan\tfrac{F_z}{K_{y2}F_{z0}}\Big)(1 + p_{py2}\,d_P) \\
 B_y &= \dfrac{K_{y\alpha 0}}{C_y D_y}, \qquad S_{Hy} = H_{y1} + H_{y2}\,d_{Fz} + H_{y3}\gamma \\
 S_{Vy} &= F_z\big[(V_{y1}+V_{y2}\,d_{Fz}) + (V_{y3}+V_{y4}\,d_{Fz})\gamma\big] \\
-E_y &= \tanh(E_{y1}+E_{y2}\,d_{Fz})\big(1 - (E_{y3}+E_{y4}\gamma)\,\operatorname{sign}(\alpha_y)\big), \qquad \alpha_y = \alpha + S_{Hy} \\
+E_y &= \tanh(E_{y1}+E_{y2}\,d_{Fz})\big(1 - (E_{y3}+E_{y4}\gamma)\,\mathrm{sign}(\alpha_y)\big), \qquad \alpha_y = \alpha + S_{Hy} \\
 F_{y0} &= D_y\,\sin\!\Big\{C_y\arctan\big[B_y\alpha_y - E_y(B_y\alpha_y - \arctan B_y\alpha_y)\big]\Big\} + S_{Vy}
 \end{aligned}
 $$
@@ -163,7 +163,7 @@ $$
 \alpha_t &= \alpha + q_{Hz1} + q_{Hz2}\,d_{Fz} + (q_{Hz3} + q_{Hz4}\,d_{Fz})\gamma \\
 D_t &= F_z\,\tfrac{r_0}{F_{z0}}(q_{Dz1}+q_{Dz2}\,d_{Fz})(1+q_{pz1}\,d_P)(1 - q_{Dz3}|\gamma|) \\
 B_t &= \dfrac{(q_{Bz1}+q_{Bz2}d_{Fz}+q_{Bz3}d_{Fz}^2)(1+q_{Bz5}|\gamma|)\,r_0}{F_{z0}D_t} \\
-E_t &= \tanh(q_{Ez1}+q_{Ez2}\,d_{Fz})\big(1+(q_{Ez4}+q_{Ez5}\gamma)\operatorname{sign}(\alpha_t)\big) \\
+E_t &= \tanh(q_{Ez1}+q_{Ez2}\,d_{Fz})\big(1+(q_{Ez4}+q_{Ez5}\gamma)\mathrm{sign}(\alpha_t)\big) \\
 t &= D_t\cos\!\Big\{q_{Cz1}\arctan\big[B_t\alpha_t - E_t(B_t\alpha_t - \arctan B_t\alpha_t)\big]\Big\}\cos\alpha \\
 M_{zr} &= D_r\cos(\arctan B_r\alpha_r), \quad D_r = F_z r_0\big[(q_{Dz6}+q_{Dz7}d_{Fz}) + (q_{Dz8}+q_{Dz9}d_{Fz})\gamma\big] \\
 \alpha_r &= \alpha + S_{Hy} + \dfrac{S_{Vy}}{K_{y\alpha0}}, \qquad B_r = \dfrac{r_0}{F_{z0}} \\
@@ -234,7 +234,7 @@ $$
 | Término | Definición | Escala de normalización |
 |---|---|---|
 | $\mathcal{L}_{\text{data}}$ | $\mathrm{Huber}_{\delta=5}\!\big(\tfrac{\Delta F_y}{70},\tfrac{r_{Fy}}{70}\big) + \mathrm{Huber}_{\delta=5}\!\big(\tfrac{\Delta M_z}{8.3},\tfrac{r_{Mz}}{8.3}\big)$ | RMSE de Pacejka → ambos canales pesan igual |
-| $\mathcal{L}_{\text{pas}}$ | $\mathbb{E}\big[\mathrm{ReLU}(-\tfrac{F_y}{2500}\operatorname{sign}\alpha)^2\big]$ en máscara $\lvert\gamma\rvert<0.015 \wedge \lvert\alpha\rvert>0.02$ | Penaliza potencia disipada negativa |
+| $\mathcal{L}_{\text{pas}}$ | $\mathbb{E}\big[\mathrm{ReLU}(-\tfrac{F_y}{2500}\mathrm{sign}\alpha)^2\big]$ en máscara $\lvert\gamma\rvert<0.015 \wedge \lvert\alpha\rvert>0.02$ | Penaliza potencia disipada negativa |
 | $\mathcal{L}_{\text{reg}}$ | $\mathbb{E}\big[(\tfrac{\Delta F_y}{2500})^2\big] + \mathbb{E}\big[(\tfrac{\Delta M_z}{40})^2\big]$ | Empuja $\Delta\to 0$ en zonas ambiguas |
 
 > **Nota.** Con $\delta=5$ sobre valores escalados por 70 N, la zona cuadrática de Huber llega a ±350 N: en la práctica es MSE. El nombre "Huber" es más conservador de lo que el comportamiento real sugiere.
@@ -291,7 +291,7 @@ flowchart LR
 - RMSE de Pacejka global (línea base a batir)
 - Fracción de $|r_{Fy}|$ por encima de la guarda de 600 N y del antiguo límite de 250 N
 - Sesgo de $r_{Fy}$ en $|\alpha|<0.01$ rad
-- Violación de signo $F_y\operatorname{sign}(\alpha)$ en datos **medidos**
+- Violación de signo $F_y\mathrm{sign}(\alpha)$ en datos **medidos**
 
 ---
 
@@ -299,7 +299,7 @@ flowchart LR
 
 ### 8.1 `training/03_diagnose.py`: suelo de ruido y error por condición
 
-- **Ruido**: $\sigma$ estimado con la segunda diferencia $d_2 = y_{t-1} - 2y_t + y_{t+1}$, robusto por MAD. Para ruido blanco $\operatorname{Var}(d_2) = 6\sigma^2$, así que $\hat\sigma = 1.4826\,\text{MAD}(d_2)/\sqrt{6}$.
+- **Ruido**: $\sigma$ estimado con la segunda diferencia $d_2 = y_{t-1} - 2y_t + y_{t+1}$, robusto por MAD. Para ruido blanco $\mathrm{Var}(d_2) = 6\sigma^2$, así que $\hat\sigma = 1.4826\,\text{MAD}(d_2)/\sqrt{6}$.
 - **Autocorrelación lag-1** del error híbrido: ≈1 indica error sistemático lento; ≈0 indica ruido blanco. Es el criterio para decidir si queda margen de mejora o ya se alcanzó el suelo de ruido.
 - **Desglose en VAL** por $|\alpha|$, $F_z$, $\gamma$, $P$, $\bar T$ y $\dot\alpha$: RMSE de Pacejka vs híbrido y sesgo por bin.
 
@@ -464,7 +464,7 @@ Explícitos, para que cualquier cambio de premisa invalide lo correcto:
 | Problema | Consecuencia |
 |---|---|
 | Semilla única (0) para split, init y ejecuciones | Sin intervalos de confianza sobre las métricas |
-| Pasividad como penalización blanda | No garantiza $F_y \operatorname{sign}\alpha \ge 0$ fuera de la máscara |
+| Pasividad como penalización blanda | No garantiza $F_y \mathrm{sign}\alpha \ge 0$ fuera de la máscara |
 | `validation/test_passivity.py` vacío | La propiedad no se verifica de forma automática |
 | Baseline sin cotas | Los parámetros MF pueden salir de rango físico sin aviso |
 
@@ -482,4 +482,3 @@ Explícitos, para que cualquier cambio de premisa invalide lo correcto:
 
 ---
 
-<sub>Licencia: no especificada en el repositorio. Datos Calspan TTC: sujetos a los términos del proveedor.</sub>
